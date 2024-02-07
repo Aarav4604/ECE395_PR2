@@ -42,20 +42,22 @@ void hash_map::insert(int key, float value)
 
 std::optional<float> hash_map::get_value(int key) const 
 {
-    for(int i = 0; i<= _size; i++)
+    int index_hash = abs(key) % _capacity;
+    if(_head[index_hash].get_value(key).has_value())
     {
-        
-        if(_head[i].get_value(key).has_value())
-        {
-            return _head[i].get_value(key);
-        }
+        return _head[index_hash].get_value(key);
     }
     return std::nullopt;
 }
 
 bool hash_map::remove(int key)
 {
-
+    int index = abs(key) % _capacity;
+    if(_head[index].remove(key))
+    {
+        return true;
+    }
+    return false;
 }
 
 size_t hash_map::get_size() const {
