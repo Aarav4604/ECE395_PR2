@@ -42,14 +42,12 @@ hash_map& hash_map:: operator=(const hash_map &other)
 
 void hash_map::insert(int key, float value) 
 {
-    int index_hash = abs(key) % _capacity;
-    int temp_size = _head[index_hash].get_size();
-    _head[index_hash].insert(key, value);
-
-    if(temp_size != _head[index_hash].get_size())
-    {
-        _size = _size + 1;
-    }   
+    size_t index = std::abs(key) % _capacity;
+    auto oldValue = _head[index].get_value(key);
+    _head[index].insert(key, value);
+    if (!oldValue.has_value()) {
+        _size++;
+    }
 }
 
 std::optional<float> hash_map::get_value(int key) const 
@@ -64,10 +62,9 @@ std::optional<float> hash_map::get_value(int key) const
 
 bool hash_map::remove(int key)
 {
-    int index = abs(key) % _capacity;
-    if(_head[index].remove(key))
-    {
-        _size = _size - 1;
+    size_t index = std::abs(key) % _capacity;
+    if (_head[index].remove(key)) {
+        _size--;
         return true;
     }
     return false;
@@ -84,18 +81,18 @@ size_t hash_map::get_capacity() const {
 
 void hash_map::get_all_keys(int *keys) 
 {
-   size_t k = 0;
+   size_t index = 0;
     for (size_t i = 0; i < _capacity; ++i) {
-        _head[i].reset_iter(); 
-        while (!_head[i].iter_at_end()) { 
-            auto iterValue = _head[i].get_iter_value(); 
+        _head[i].reset_iter();
+        while (!_head[i].iter_at_end()) {
+            auto iterValue = _head[i].get_iter_value();
             if (iterValue.has_value()) {
-                keys[k++] = *(iterValue->first); 
+                keys[index++] = *(iterValue->first); 
             }
             _head[i].increment_iter(); 
         }
     }
-
+    
 }
 
 void hash_map::get_bucket_sizes(size_t *buckets) {
