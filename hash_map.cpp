@@ -25,6 +25,18 @@ hash_map::hash_map(const hash_map &other)
 
 hash_map& hash_map:: operator=(const hash_map &other)
 {
+    if (this == &other) return *this;
+
+    delete[] _head; 
+
+    _size = other._size;
+    _capacity = other._capacity;
+    _head = new hash_list[_capacity];
+    for (size_t i = 0; i < _capacity; ++i) {
+        _head[i] = other._head[i]; 
+    }
+
+    return *this;
 
 }
 
@@ -71,7 +83,17 @@ size_t hash_map::get_capacity() const {
 
 void hash_map::get_all_keys(int *keys) 
 {
-    
+   size_t k = 0;
+    for (size_t i = 0; i < _capacity; ++i) {
+        _head[i].reset_iter(); 
+        while (!_head[i].iter_at_end()) { 
+            auto iterValue = _head[i].get_iter_value(); 
+            if (iterValue.has_value()) {
+                keys[k++] = *(iterValue->first); 
+            }
+            _head[i].increment_iter(); 
+        }
+    }
 
 }
 
