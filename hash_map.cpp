@@ -67,6 +67,7 @@ bool hash_map::remove(int key)
     int index = abs(key) % _capacity;
     if(_head[index].remove(key))
     {
+        _size = _size - 1;
         return true;
     }
     return false;
