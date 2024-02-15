@@ -8,16 +8,16 @@
 /** A single key/value pair in the linked list */
 template<class K, class V>
 struct node
-    {
-        /** The key the node is storing */
-        K key;
+{
+    /** The key the node is storing */
+    K key;
 
-        /** the value the node is storing */
-        V value;
+    /** the value the node is storing */
+    V value;
 
-        /** a pointer to the next node */
-        node *next;
-    }
+    /** a pointer to the next node */
+    node *next;
+};
 
 /** A list that stores key/value pairs */
 template <class K, class V>

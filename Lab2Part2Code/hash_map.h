@@ -135,8 +135,7 @@ private:
 
     /** The number of buckets in the hash map */
     size_t _capacity;
-    //capacity index?
-    int capacity_index; 
+
     /** The load factor that determines when we increase hash map capacity */
     float _upper_load_factor;
 

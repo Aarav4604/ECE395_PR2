@@ -13,7 +13,8 @@ hash_map::hash_map(size_t capacity, float upper_load_factor, float lower_load_fa
     _capacity = capacity; 
     _lower_load_factor = lower_load_factor;
     _upper_load_factor = upper_load_factor;
-    _head = new hash_list[capacity]; // questionable
+    //_head = new hash_list[capacity]; // questionable
+    //pass in a capacity, and determine if it is in the range
 }
 
 

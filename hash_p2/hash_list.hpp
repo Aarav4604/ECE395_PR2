@@ -13,7 +13,7 @@ template<typename K, typename V> void hash_list<K,V>::insert(K key, V value) {
     
     // if set is empty
     if(local_head == nullptr){
-        node<K,V>* new_node = new node;
+        node<K,V>* new_node = new node<K,V>;
         local_head = new_node;
         local_head->key = key;
         local_head->value = value;
@@ -23,7 +23,7 @@ template<typename K, typename V> void hash_list<K,V>::insert(K key, V value) {
     }
     else
     {
-        node* prev_local;
+        node<K,V>* prev_local;
         while(local_head != nullptr)
         {
             if(local_head->key == key)
@@ -34,7 +34,7 @@ template<typename K, typename V> void hash_list<K,V>::insert(K key, V value) {
             prev_local = local_head;
             local_head = local_head->next;
         }
-        node* new_node = new node;
+        node<K,V>* new_node = new node<K,V>;
         local_head = new_node;
         prev_local->next = local_head;
         local_head->key = key;
@@ -50,7 +50,7 @@ template<typename K, typename V> void hash_list<K,V>::insert(K key, V value) {
 
 template<typename K,typename V >std::optional<float> hash_list<K,V>::get_value(K key) const 
 { 
-    node *current = head;
+    node<K,V> *current = head;
     while(current != nullptr)
     {
         if(current->key==key)
@@ -73,18 +73,18 @@ template<typename K, typename V> bool hash_list<K,V>::remove(K key)
    
     if(this->head->key == key)
     {
-        node* delete_node = this->head;
+        node<K,V>* delete_node = this->head;
         this->head = this->head->next;
         size = size - 1;
         delete delete_node;
         return true;
     }
-    node* local_node = this->head;
+    node<K,V>* local_node = this->head;
     while(local_node->next != nullptr)
     {
         if(local_node->next->key == key)
         {
-            node * delete_node = local_node->next;
+            node<K,V> * delete_node = local_node->next;
             local_node->next = delete_node->next;
             size = size - 1;
             delete delete_node;
@@ -103,8 +103,8 @@ template<typename K, typename V> size_t hash_list<K,V>::get_size() const
 
 template<typename K,typename V>hash_list<K,V>::~hash_list() 
 {
-    node * local_node = this->head;
-    node * del_node = nullptr;
+    node<K,V> * local_node = this->head;
+    node<K,V> * del_node = nullptr;
     while(local_node !=nullptr)
     {
         del_node = local_node;
@@ -127,7 +127,7 @@ template<typename K, typename V >hash_list<K,V>::hash_list(const hash_list &othe
     size = 0;
     head = nullptr;
     iter_ptr = nullptr;
-    node* current = other.head;
+    node<K,V>* current = other.head;
     while (current != nullptr) {
         this->insert(current->key, current->value);
         current = current->next;
@@ -139,9 +139,9 @@ template<typename K, typename V > hash_list<K,V> &hash_list<K,V>::operator=(cons
     if(this == &other){
         return *this;
     }
-    node *curr = head;
+    node<K,V> *curr = head;
     while (curr != nullptr) {
-        node *next = curr->next;
+        node<K,V> *next = curr->next;
         delete curr;
         curr = next;
     }
