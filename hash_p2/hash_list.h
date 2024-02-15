@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 /** A single key/value pair in the linked list */
-template<typename K, typename V>
+template<class K, class V>
 struct node
     {
         /** The key the node is storing */
@@ -20,7 +20,7 @@ struct node
     }
 
 /** A list that stores key/value pairs */
-template <typename K, typename V>
+template <class K, class V>
 class hash_list
 {
 

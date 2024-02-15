@@ -1,7 +1,8 @@
 #include "hash_list.h"
 #include <iostream>
 
-hash_list::hash_list() :size(0), head(nullptr),iter_ptr(nullptr) {}
+template<typename K, typename V> 
+hash_list<K,V>::hash_list() : size(0), head(nullptr),iter_ptr(nullptr){}
 
 /**-----------------------------------------------------------------------------------
  * START Part 1
@@ -11,8 +12,8 @@ template<typename K, typename V> void hash_list<K,V>::insert(K key, V value) {
     node* local_head = head;
     
     // if set is empty
-    if (local_head == nullptr){
-        node* new_node = new node;
+    if(local_head == nullptr){
+        node<K,V>* new_node = new node;
         local_head = new_node;
         local_head->key = key;
         local_head->value = value;
@@ -28,11 +29,10 @@ template<typename K, typename V> void hash_list<K,V>::insert(K key, V value) {
             if(local_head->key == key)
             {
                 local_head->value = value;
-                return;
+                
             }
             prev_local = local_head;
             local_head = local_head->next;
- 
         }
         node* new_node = new node;
         local_head = new_node;
@@ -41,7 +41,7 @@ template<typename K, typename V> void hash_list<K,V>::insert(K key, V value) {
         local_head->value = value;
         
         local_head->next = nullptr;
-        this->size = this->size + 1;
+        size = size + 1;
         
         
     }
@@ -203,3 +203,5 @@ template<typename K, typename V > bool hash_list<K,V>::iter_at_end() {
 /**-----------------------------------------------------------------------------------
  * END Part 2
  *------------------------------------------------------------------------------------*/
+
+ 
