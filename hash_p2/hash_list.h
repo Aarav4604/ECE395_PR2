@@ -136,7 +136,7 @@ public:
      *  If the iterator is NULL returns an empty optional
      *  Otherwise returns a pointer to the key/value pointed to by the current iterator
      */
-    std::optional<std::pair<const int *, float *>> get_iter_value();
+    std::optional<std::pair<const K *, V *>> get_iter_value();
 
     /**
      * @brief Returns true if the iterator is NULL

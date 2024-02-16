@@ -185,7 +185,7 @@ template<typename K, typename V > void hash_list<K,V>::increment_iter() {
 
 
 template<typename K, typename V > 
-std::optional<std::pair<const int *, float *>> hash_list<K,V>::get_iter_value() 
+std::optional<std::pair<const K *, V *>> hash_list<K,V>::get_iter_value() 
 { 
     if(iter_ptr!=nullptr)
     {
