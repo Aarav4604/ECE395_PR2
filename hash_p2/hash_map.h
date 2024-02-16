@@ -120,7 +120,7 @@ public:
      *  A pointer to an array that has at least _capacity elements
      */
     void get_bucket_sizes(size_t *buckets);
-
+    
     /**
      * @brief Frees all memory associated with the map
      */
@@ -135,13 +135,17 @@ private:
 
     /** The number of buckets in the hash map */
     size_t _capacity;
-    //capacity index?
-    int capacity_index; 
+    
+     
     /** The load factor that determines when we increase hash map capacity */
     float _upper_load_factor;
 
     /** The load factor that determines when we decrease hash map capacity */
     float _lower_load_factor;
+    //capacity index?
+    int capacity_index;
+
+    void rehash();
 
     /** Built in hashing function for type K */
     std::hash<K> _hash;

@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 /** A single key/value pair in the linked list */
-template<class K, class V>
+template<typename K, typename V>
 struct node
 {
     /** The key the node is storing */
@@ -156,13 +156,13 @@ private:
     size_t size;
 
     /** A pointer to the first node in the list */
-    node *head;
+    node<K,V> *head;
 
     /** The node that the iterator is currently pointing to */
-    node *iter_ptr;
+    node<K,V> *iter_ptr;
     
     
 
 };
-
+#include "hash_list.hpp"
 #endif

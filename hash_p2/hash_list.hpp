@@ -9,7 +9,7 @@ hash_list<K,V>::hash_list() : size(0), head(nullptr),iter_ptr(nullptr){}
  *------------------------------------------------------------------------------------*/
 //We need to implement all the functions as Template
 template<typename K, typename V> void hash_list<K,V>::insert(K key, V value) {
-    node* local_head = head;
+    node<K,V>* local_head = head;
     
     // if set is empty
     if(local_head == nullptr){
@@ -184,7 +184,8 @@ template<typename K, typename V > void hash_list<K,V>::increment_iter() {
 }
 
 
-template<typename K, typename V > std::optional<std::pair<const int *, float *>> hash_list<K,V>::get_iter_value() 
+template<typename K, typename V > 
+std::optional<std::pair<const int *, float *>> hash_list<K,V>::get_iter_value() 
 { 
     if(iter_ptr!=nullptr)
     {
