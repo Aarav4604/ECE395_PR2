@@ -121,11 +121,11 @@ void hash_map<K,V>::rehash()
     _hash_map.capacity_index = capacity_index;
 
     _hash_map._head = new hash_list<K, V>[_capacity];
-    K * array_keys = [_size];
-    V * array_vals = [_size];
-    this->get_all_keys(array_keys)
+    K * array_keys = [this->_size]; //not working
+    V * array_vals = [this->_size]; //not working
+    this->get_all_keys(*array_keys);
     
-    for (size_t i = 0; i < _size; ++i) {
+    for (size_t i = 0; i < this->_size; ++i) {
         array_vals[i] = get_value(array_keys[i]);
         _hash_map.insert(array_keys[i],array_vals[i]);
     }
