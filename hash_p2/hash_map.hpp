@@ -53,9 +53,10 @@ void hash_map<K, V>::insert(K key, V value) {
     _size++;
     if(_size > _upper_load_factor * _capacity)
     {
+        //need to make sure it doesnt overflow the capacities
         capacity_index = capacity_index + 1;
         _capacity = _capacities[capacity_index];
-        rehash();
+        this->rehash();
     }
 }
 
@@ -76,9 +77,10 @@ bool hash_map<K, V>::remove(K key) {
         _size--;
         if(_size < _lower_load_factor * _capacity)
         {
+            //need to make sure it doesnt overflow the capacities
             capacity_index = capacity_index - 1;
             _capacity = _capacities[capacity_index];
-            rehash();
+            this->rehash();
         }
         return true;
     }
@@ -113,23 +115,28 @@ template<typename K, typename V>
 void hash_map<K,V>::rehash()
 {
 
-    hash_map _hash_map = new hash_map<K,V>;
+    /* hash_map _hash_map = new hash_map<K,V>;
     _hash_map._capacity = _capacity;
     _hash_map._size = _size;
     _hash_map._upper_load_factor = _upper_load_factor;
     _hash_map._lower_load_factor = _lower_load_factor;
-    _hash_map.capacity_index = capacity_index;
+    _hash_map.capacity_index = capacity_index; */
 
-    _hash_map._head = new hash_list<K, V>[_capacity];
-    K * array_keys = [this->_size]; //not working
-    V * array_vals = [this->_size]; //not working
-    this->get_all_keys(*array_keys);
+    K * array_keys[_size];
+    V * array_vals[_size];
+    this->get_all_keys(array_keys);
     
     for (size_t i = 0; i < this->_size; ++i) {
         array_vals[i] = get_value(array_keys[i]);
-        _hash_map.insert(array_keys[i],array_vals[i]);
+        
     }
-    this = _hash_map;
+    delete [] _head;
+
+    _head = new hash_list<K, V>[_capacity];
+    for(size_t i=0; i<_size;++i)
+    {
+        this->insert(array_keys[i],array_vals[i]);
+    }   
     
 }
 
