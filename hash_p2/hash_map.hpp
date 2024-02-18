@@ -53,10 +53,15 @@ void hash_map<K, V>::insert(K key, V value) {
     _size++;
     if(_size > _upper_load_factor * _capacity)
     {
-        //need to make sure it doesnt overflow the capacities
-        capacity_index = capacity_index + 1;
-        _capacity = _capacities[capacity_index];
-        this->rehash();
+        if(capacity_index == 2){
+                _capacity = _capacities[capacity_index];
+                this->rehash();
+            }
+            else{
+                capacity_index = capacity_index + 1;
+                _capacity = _capacities[capacity_index];
+                this->rehash();
+            }
     }
 }
 
@@ -77,10 +82,18 @@ bool hash_map<K, V>::remove(K key) {
         _size--;
         if(_size < _lower_load_factor * _capacity)
         {
+            if(capacity_index == 0){
+                _capacity = _capacities[capacity_index];
+                this->rehash();
+            }
+            else{
+                capacity_index = capacity_index - 1;
+                _capacity = _capacities[capacity_index];
+                this->rehash();
+            }
             //need to make sure it doesnt overflow the capacities
-            capacity_index = capacity_index - 1;
-            _capacity = _capacities[capacity_index];
-            this->rehash();
+            
+            
         }
         return true;
     }
