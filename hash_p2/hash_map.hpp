@@ -1,31 +1,29 @@
+
 #include "hash_map.h"
 
 #include <iostream>
 #include <cmath>
 
 
-
 template<typename K, typename V>
-hash_map<K,V>::hash_map(size_t capacity, float upper_load_factor, float lower_load_factor){
-    _size = 0; 
-    _capacity = capacity; 
-    _lower_load_factor = lower_load_factor;
-    _upper_load_factor = upper_load_factor;
-    capacity_index = 0;
-    _head = new hash_list<K,V>[_capacity];
+hash_map<K, V>::hash_map(size_t initial_capacity,
+                         float upper_load_factor,
+                         float lower_load_factor)
+    : _upper_load_factor(upper_load_factor), _lower_load_factor(lower_load_factor), _size(0), capacity_index(0) {
+    
+    _capacity = _capacities[0];
+    
+    _head = new hash_list<K, V>[_capacity];
 }
-
 
 template<typename K, typename V>
 hash_map<K, V>::hash_map(const hash_map &other)
-    :   _size(other._size),
-        _capacity(other._capacity),
-        _upper_load_factor(other._upper_load_factor),
-        _lower_load_factor(other._lower_load_factor),
-        capacity_index(other.capacity_index) {
+    : _size(other._size), _capacity(other._capacity),
+      _upper_load_factor(other._upper_load_factor), _lower_load_factor(other._lower_load_factor),
+      capacity_index(other.capacity_index) {
     _head = new hash_list<K, V>[_capacity];
-    for (size_t i = 0; i < _capacity; ++i) {
-        _head[i] = other._head[i]; 
+    for (size_t i = 0; i < _capacity; i++) {
+        _head[i] = other._head[i];
     }
 }
 
@@ -33,37 +31,41 @@ template<typename K, typename V>
 hash_map<K, V>& hash_map<K, V>::operator=(const hash_map &other) {
     if (this != &other) {
         delete[] _head;
-        _capacity = other._capacity;
+
         _size = other._size;
+        _capacity = other._capacity;
         _upper_load_factor = other._upper_load_factor;
         _lower_load_factor = other._lower_load_factor;
         capacity_index = other.capacity_index;
+
         _head = new hash_list<K, V>[_capacity];
-        for (size_t i = 0; i < _capacity; ++i) {
-            _head[i] = other._head[i]; 
+        for (size_t i = 0; i < _capacity; i++) {
+            _head[i] = other._head[i];
         }
     }
     return *this;
 }
 
+
 template<typename K, typename V>
 void hash_map<K, V>::insert(K key, V value) {
-    size_t index = _hash(key) % _capacity;
-    _head[index].insert(key, value); 
-    _size++;
-    if(_size > _upper_load_factor * _capacity)
-    {
-        if(capacity_index == 2){
-                _capacity = _capacities[capacity_index];
-                this->rehash();
-            }
-            else{
-                capacity_index = capacity_index + 1;
-                _capacity = _capacities[capacity_index];
-                this->rehash();
-            }
+    auto index = _hash(key) % _capacity;
+    size_t oldSize = _head[index].get_size(); 
+    _head[index].insert(key, value);
+    size_t newSize = _head[index].get_size(); 
+
+
+    if (newSize > oldSize) {
+        _size++;
+    }
+
+
+    if (static_cast<float>(_size) / _capacity > _upper_load_factor) {
+        rehash();
     }
 }
+
+
 
 template<typename K, typename V> std::optional<V> hash_map<K,V>::get_value(K key) const
 {
@@ -78,23 +80,8 @@ template<typename K, typename V> std::optional<V> hash_map<K,V>::get_value(K key
 template<typename K, typename V>
 bool hash_map<K, V>::remove(K key) {
     size_t index = _hash(key) % _capacity;
-    if (_head[index].remove(key)) {
+    if (_head[index].remove(key)) { 
         _size--;
-        if(_size < _lower_load_factor * _capacity)
-        {
-            if(capacity_index == 0){
-                _capacity = _capacities[capacity_index];
-                this->rehash();
-            }
-            else{
-                capacity_index = capacity_index - 1;
-                _capacity = _capacities[capacity_index];
-                this->rehash();
-            }
-            //need to make sure it doesnt overflow the capacities
-            
-            
-        }
         return true;
     }
     return false;
@@ -124,34 +111,47 @@ template<typename K, typename V> void hash_map<K,V>::get_all_keys(K *keys)
         }
     }
 }
+
 template<typename K, typename V>
-void hash_map<K,V>::rehash()
-{
-
-    /* hash_map _hash_map = new hash_map<K,V>;
-    _hash_map._capacity = _capacity;
-    _hash_map._size = _size;
-    _hash_map._upper_load_factor = _upper_load_factor;
-    _hash_map._lower_load_factor = _lower_load_factor;
-    _hash_map.capacity_index = capacity_index; */
-
-    K * array_keys[_size];
-    V * array_vals[_size];
-    this->get_all_keys(array_keys);
-    
-    for (size_t i = 0; i < this->_size; ++i) {
-        array_vals[i] = get_value(array_keys[i]);
-        
+void hash_map<K, V>::rehash() {
+    size_t new_capacity_index = capacity_index;
+   
+    if (_size > _upper_load_factor * _capacity) {
+        new_capacity_index++;
+    } else if (_size < _lower_load_factor * _capacity) {
+        new_capacity_index--;
     }
-    delete [] _head;
 
-    _head = new hash_list<K, V>[_capacity];
-    for(size_t i=0; i<_size;++i)
-    {
-        this->insert(array_keys[i],array_vals[i]);
-    }   
-    
+
+    if (new_capacity_index == capacity_index) {
+        return;
+    }
+
+    auto new_capacity = _capacities[new_capacity_index];
+    auto new_head = new hash_list<K, V>[new_capacity];
+
+
+    for (size_t i = 0; i < _capacity; ++i) {
+        _head[i].reset_iter();
+        while (!_head[i].iter_at_end()) {
+            auto iter_value = _head[i].get_iter_value();
+            if (iter_value) {
+                const K* key_ptr = iter_value->first;
+                V* value_ptr = iter_value->second;
+                size_t new_index = _hash(*key_ptr) % new_capacity;
+                new_head[new_index].insert(*key_ptr, *value_ptr);
+            }
+            _head[i].increment_iter();
+        }
+    }
+
+
+    delete[] _head;
+    _head = new_head;
+    _capacity = new_capacity;
+    capacity_index = new_capacity_index;
 }
+
 
 template<typename K, typename V>
 void hash_map<K, V>::get_all_sorted_keys(K *keys) {
