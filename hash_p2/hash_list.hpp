@@ -8,44 +8,32 @@ hash_list<K,V>::hash_list() : size(0), head(nullptr),iter_ptr(nullptr){}
  * START Part 1
  *------------------------------------------------------------------------------------*/
 //We need to implement all the functions as Template
-template<typename K, typename V> void hash_list<K,V>::insert(K key, V value) {
+template<typename K, typename V> 
+void hash_list<K,V>::insert(K key, V value) {
     node<K,V>* local_head = head;
-    
-    // if set is empty
-    if(local_head == nullptr){
-        node<K,V>* new_node = new node<K,V>;
-        local_head = new_node;
-        local_head->key = key;
-        local_head->value = value;
-        local_head->next = nullptr;
-        head = local_head;
-        size = 1;
-    }
-    else
-    {
-        node<K,V>* prev_local;
-        while(local_head != nullptr)
-        {
-            if(local_head->key == key)
-            {
-                local_head->value = value;
-                
-            }
-            prev_local = local_head;
-            local_head = local_head->next;
+    node<K,V>* prev_local = nullptr;
+
+    while(local_head != nullptr) {
+        if(local_head->key == key) {
+            local_head->value = value;
+            return; 
         }
-        node<K,V>* new_node = new node<K,V>;
-        local_head = new_node;
-        prev_local->next = local_head;
-        local_head->key = key;
-        local_head->value = value;
-        
-        local_head->next = nullptr;
-        size = size + 1;
-        
-        
+        prev_local = local_head;
+        local_head = local_head->next;
     }
-    
+
+    node<K,V>* new_node = new node<K,V>;
+    new_node->key = key;
+    new_node->value = value;
+    new_node->next = nullptr;
+
+    if(prev_local == nullptr) { 
+        head = new_node;
+    } else {
+        prev_local->next = new_node;
+    }
+
+    size += 1; 
 }
 
 template<typename K,typename V >std::optional<float> hash_list<K,V>::get_value(K key) const 
